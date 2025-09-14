@@ -1,5 +1,5 @@
 import React from 'react'
-import banner from '../../assets/images/hero.jpg'
+import banner from '../../assets/images/hero.webp'
 
 const Hero = () => {
     return (
@@ -29,6 +29,8 @@ const Hero = () => {
                 <div className="w-full md:w-1/2">
                     <img
                         src={banner}
+                        lazy="loading"
+                        fetchPriority='high'
                         alt="Hero Image"
                         className="w-full h-60 md:h-96 object-cover "
                     />

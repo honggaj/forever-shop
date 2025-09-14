@@ -4,13 +4,13 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     price: { type: Number, required: true },
-    category: { type: String, required: true }, // men / women / kids
-    type: { type: String, required: true },     // shirt / pants / dress...
 
-    size: [{ type: String }],  // ["S","M","L","XL"]
-    color: [{ type: String }], // ["white","black"]
+    // Category chỉ 1 loại duy nhất
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
 
-    description: { type: String },
+    size: [{ type: String }],   // ["S","M","L","XL"] hoặc ["38","39"] cho giày
+    color: [{ type: String }],  // ["white","black"]
+    // description: { type: String },
     images: [{ type: String }], // lưu nhiều ảnh
     stock: { type: Number, default: 0 },
   },

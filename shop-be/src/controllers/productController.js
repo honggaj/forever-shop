@@ -1,6 +1,5 @@
 import * as productService from "../services/productService.js";
 
-// Lấy tất cả sản phẩm
 export const getProducts = async (req, res) => {
   try {
     const products = await productService.getAllProducts();
@@ -10,7 +9,6 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// Lấy 1 sản phẩm theo id
 export const getProductById = async (req, res) => {
   try {
     const product = await productService.getProductById(req.params.id);
@@ -21,7 +19,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-// Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
   try {
     const savedProduct = await productService.createProduct(req.body, req.files);
@@ -31,7 +28,6 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// Update sản phẩm
 export const updateProduct = async (req, res) => {
   try {
     const updated = await productService.updateProduct(req.params.id, req.body, req.files);
@@ -41,7 +37,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// Xóa sản phẩm
 export const deleteProduct = async (req, res) => {
   try {
     await productService.deleteProduct(req.params.id);
