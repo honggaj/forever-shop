@@ -1,44 +1,65 @@
 import { NavLink, Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { BiSearchAlt2 } from "react-icons/bi";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdAccountCircle } from "react-icons/md";
 import { HiShoppingCart } from "react-icons/hi";
 import { CiMenuFries } from "react-icons/ci";
 import { IoClose } from "react-icons/io5";
+import { fetchCategories } from "../../services/api"; // file bạn có sẵn
 
 export default function Navbar() {
   const [visible, setVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [mobileSubmenu, setMobileSubmenu] = useState(false);
+
+  useEffect(() => {
+    fetchCategories().then((data) => setCategories(data));
+  }, []);
 
   return (
     <>
       {/* Navbar */}
       <div className="flex justify-between items-center py-5 font-medium">
-        <img className="w-32" 
-        src={logo}
-         alt="logo-forever"
-         lazy="loading"
-         fetchPriority="high"
-         />
+        <img
+          className="w-32"
+          src={logo}
+          alt="logo-forever"
+          loading="lazy"
+          fetchPriority="high"
+        />
 
         {/* Desktop Menu */}
         <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
-          <NavLink to="/home" className="flex flex-col gap-1 items-center">
-            <p>HOME</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink to="/collection" className="flex flex-col gap-1 items-center">
-            <p>COLLECTION</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink to="/about" className="flex flex-col gap-1 items-center">
-            <p>ABOUT</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink to="/contact" className="flex flex-col gap-1 items-center">
-            <p>CONTACT</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
+          <NavLink to="/home">HOME</NavLink>
+
+          {/* Dropdown COLLECTION */}
+          <div className="relative group">
+            <div className="flex flex-col gap-1 items-center cursor-pointer">
+              <NavLink to="/collection">
+                COLLECTION
+              </NavLink>
+            </div>
+
+            {/* Dropdown list */}
+            <div className="absolute left-0 top-full bg-white shadow-lg rounded mt-0 hidden group-hover:block z-50">
+              <ul className="flex flex-col text-gray-700 min-w-[150px]">
+                {categories.map((cat) => (
+                  <NavLink
+                    key={cat.id}
+                    to={`/collection/${cat.slug}`}
+                    className="px-4 py-2 hover:bg-gray-100"
+                  >
+                    {cat.name}
+                  </NavLink>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+
+          <NavLink to="/about">ABOUT</NavLink>
+          <NavLink to="/contact">CONTACT</NavLink>
         </ul>
 
         {/* Right Icons */}
@@ -72,9 +93,8 @@ export default function Navbar() {
 
       {/* Mobile Menu Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-2/3 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
-          visible ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-2/3 bg-white shadow-lg z-50 transform transition-transform duration-300 ${visible ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex justify-between items-center p-5 border-b">
           <h2 className="text-lg font-semibold">Menu</h2>
@@ -87,9 +107,32 @@ export default function Navbar() {
           <NavLink onClick={() => setVisible(false)} to="/home">
             HOME
           </NavLink>
-          <NavLink onClick={() => setVisible(false)} to="/collection">
-            COLLECTION
-          </NavLink>
+
+          {/* COLLECTION có submenu */}
+          <div>
+            <button
+              onClick={() => setMobileSubmenu(!mobileSubmenu)}
+              className="flex justify-between items-center w-full"
+            >
+              COLLECTION
+              <span>{mobileSubmenu ? "▲" : "▼"}</span>
+            </button>
+            {mobileSubmenu && (
+              <div className="ml-4 mt-2 flex flex-col gap-2">
+                {categories.map((cat) => (
+                  <NavLink
+                    key={cat.id}
+                    onClick={() => setVisible(false)}
+                    to={`/collection/${cat.slug}`}
+                    className="text-sm text-gray-600 hover:text-black"
+                  >
+                    {cat.name}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
           <NavLink onClick={() => setVisible(false)} to="/about">
             ABOUT
           </NavLink>

@@ -1,9 +1,24 @@
 import Product from "../models/Product.js";
 
 // Lấy tất cả sản phẩm
-export const getAllProducts = async () => {
-  return await Product.find();
+
+export const getAllProducts = async (sortBy = "createdAt", order = "desc") => {
+  // map sort key từ FE sang field trong MongoDB
+  const sortOptions = {
+    price: "price",
+    name: "name",
+    createdAt: "createdAt",
+  };
+
+  const sortField = sortOptions[sortBy] || "createdAt";
+  const sortOrder = order === "asc" ? 1 : -1;
+
+  return await Product.find().sort({ [sortField]: sortOrder });
 };
+// export const getAllProducts = async () => {
+//   return await Product.find();
+// };
+
 
 // Lấy 1 sản phẩm theo ID
 export const getProductById = async (id) => {
