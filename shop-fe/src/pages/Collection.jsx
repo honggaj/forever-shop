@@ -1,9 +1,17 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import ProductCard from "../components/layout/ProductCard";
 
-export default function CollectionPage() {
-  const { products, loading, setSortBy, setOrder, sortBy, order } = useContext(ShopContext);
+export default function Collection() {
+  const { slug } = useParams(); // slug từ URL
+  const { products, loading, setSortBy, setOrder, sortBy, order, setCategory } =
+    useContext(ShopContext);
+
+  useEffect(() => {
+    // chỉ cần set category → ShopProvider tự fetch
+    setCategory(slug || "");
+  }, [slug, setCategory]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -40,14 +48,13 @@ export default function CollectionPage() {
     }
   };
 
-  // tính value hiện tại của select dựa vào sortBy + order
   const currentValue = (() => {
     if (sortBy === "price" && order === "asc") return "price-asc";
     if (sortBy === "price" && order === "desc") return "price-desc";
     if (sortBy === "name" && order === "asc") return "name-asc";
     if (sortBy === "name" && order === "desc") return "name-desc";
     if (sortBy === "createdAt" && order === "asc") return "oldest";
-    return "newest"; // mặc định
+    return "newest";
   })();
 
   return (
@@ -61,14 +68,13 @@ export default function CollectionPage() {
           onChange={handleSortChange}
           className="border border-gray-300 p-2 cursor-pointer"
         >
-          <option className="cursor-pointer" value="newest">Mới nhất</option>
-          <option className="cursor-pointer" value="oldest">Cũ nhất</option>
-          <option className="cursor-pointer" value="price-asc">Giá: Tăng dần</option>
-          <option className="cursor-pointer" value="price-desc">Giá: Giảm dần</option>
-          <option className="cursor-pointer" value="name-asc">Tên: A-Z</option>
-          <option className="cursor-pointer" value="name-desc">Tên: Z-A</option>
+          <option value="newest">Mới nhất</option>
+          <option value="oldest">Cũ nhất</option>
+          <option value="price-asc">Giá: Tăng dần</option>
+          <option value="price-desc">Giá: Giảm dần</option>
+          <option value="name-asc">Tên: A-Z</option>
+          <option value="name-desc">Tên: Z-A</option>
         </select>
-
       </div>
 
       {/* Product grid */}

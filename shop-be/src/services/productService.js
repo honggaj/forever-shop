@@ -1,9 +1,7 @@
 import Product from "../models/Product.js";
+import Category from "../models/Category.js";
 
-// Lấy tất cả sản phẩm
-
-export const getAllProducts = async (sortBy = "createdAt", order = "desc") => {
-  // map sort key từ FE sang field trong MongoDB
+export const getAllProducts = async (sortBy = "createdAt", order = "desc", categorySlug) => {
   const sortOptions = {
     price: "price",
     name: "name",
@@ -13,8 +11,23 @@ export const getAllProducts = async (sortBy = "createdAt", order = "desc") => {
   const sortField = sortOptions[sortBy] || "createdAt";
   const sortOrder = order === "asc" ? 1 : -1;
 
-  return await Product.find().sort({ [sortField]: sortOrder });
+  let filter = {};
+
+if (categorySlug) {
+  const category = await Category.findOne({ slug: new RegExp("^" + categorySlug + "$", "i") });
+  if (category) {
+    filter.category = category._id;
+  } else {
+    return [];
+  }
+}
+
+
+  return await Product.find(filter)
+    .populate("category", "name slug") // populate để FE dễ dùng
+    .sort({ [sortField]: sortOrder });
 };
+
 // export const getAllProducts = async () => {
 //   return await Product.find();
 // };
